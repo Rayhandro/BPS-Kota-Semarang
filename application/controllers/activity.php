@@ -107,4 +107,54 @@ class Activity extends CI_Controller {
             return $this->upload->data('file_name');
         }
     }
+    public function editActivity($id) {
+        $data['activity'] = $this->M_activity->get_activity_by_id($id);
+    
+        $this->form_validation->set_rules('nama_kegiatan', 'Nama Kegiatan', 'required');
+        $this->form_validation->set_rules('jam_kembali', 'Jam Kembali', 'required');
+        $this->form_validation->set_rules('latlong', 'Lokasi', 'required');  // Ensure 'latlong' is used if that's the input name
+    
+        if ($this->form_validation->run() == FALSE) {
+            $this->session->set_flashdata('message', validation_errors());
+            $this->session->set_flashdata('message_type', 'danger');
+            redirect('pages/activity');
+        } else {
+            $update_data = array();
+    
+            if ($this->input->post('nama_kegiatan')) {
+                $update_data['nama_kegiatan'] = $this->input->post('nama_kegiatan');
+            }
+            if ($this->input->post('jam_kembali')) {
+                $update_data['jam_kembali'] = $this->input->post('jam_kembali');
+            }
+            if ($this->input->post('latlong')) {  // Ensure 'latlong' is used if that's the input name
+                $update_data['latlong'] = $this->input->post('latlong');
+            }
+            if (!empty($_FILES['file']['name'])) {
+                $update_data['foto'] = $this->_upload_file();
+            }
+    
+            if ($this->M_activity->update_activity($id, $update_data)) {
+                $this->session->set_flashdata('message', 'Data berhasil diupdate!');
+                $this->session->set_flashdata('message_type', 'success');
+            } else {
+                $this->session->set_flashdata('message', 'Gagal mengupdate data!');
+                $this->session->set_flashdata('message_type', 'danger');
+            }
+    
+            redirect('pages/activity');
+        }
+    }
+        
+    
+    public function deleteActivity($id) {
+        if ($this->M_activity->delete_activity($id)) {
+            $this->session->set_flashdata('message', 'Data berhasil dihapus!');
+            $this->session->set_flashdata('message_type', 'success');
+        } else {
+            $this->session->set_flashdata('message', 'Gagal menghapus data!');
+            $this->session->set_flashdata('message_type', 'danger');
+        }
+        redirect('pages/activity');
+    }   
 }
