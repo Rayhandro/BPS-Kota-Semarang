@@ -25,4 +25,17 @@ class M_User extends CI_Model
     public function register($data) {
         return $this->db->insert('user', $data);
     }
+    public function getUserById($id) {
+        return $this->db->get_where('user', array('id' => $id))->row_array();
+    }
+    
+    public function updateUser($id, $data) {
+        $this->db->where('id', $id);
+        return $this->db->update('user', $data);
+    }
+    
+    public function deleteUser($id) {
+        $this->db->where('id', $id);
+        return $this->db->delete('user');
+    }
 } 

@@ -28,7 +28,7 @@
                                 <td>Jam Kembali</td>    
                                 <td>Lokasi</td>
                                 <td>File</td>
-
+                                <td>Action</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -49,8 +49,11 @@
                                             <img src="<?= base_url('../../uploads/kegiatan_Hendra_20240624_100904.jpg') ?>" alt="" width="200" height="200">
                                             <?php echo $activity['foto'] ?>
                                         </td>
+                                        <td>
+                                            <button class="btn btn-warning" data-toggle="modal" data-target="#modal-edit" onclick="populateEditModal('<?php echo $activity['id'] ?>', '<?php echo $activity['nama_kegiatan'] ?>', '<?php echo $activity['jam_kembali'] ?>', '<?php echo $activity['latlong'] ?>', '<?php echo $activity['foto'] ?>')">Edit</button>
+                                            <a href="<?php echo site_url('activity/deleteActivity/' . $activity['id']); ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this activity?');">Delete</a>
+                                        </td>
                                     </tr>
-
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
@@ -104,3 +107,49 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modal-edit" tabindex="-1" role="dialog" aria-labelledby="modal-edit" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editDataModalLabel">Edit Aktivitas</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editDataForm" method="post" action="<?php echo site_url('activity/editActivity/'); ?>" enctype="multipart/form-data">
+                    <input type="hidden" id="edit_id" name="id">
+                    <div class="form-group">
+                        <label for="edit_nama_kegiatan">Nama Kegiatan</label>
+                        <input type="text" class="form-control" id="edit_nama_kegiatan" name="nama_kegiatan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_jam_kembali">Jam Kembali</label>
+                        <input type="time" class="form-control" id="edit_jam_kembali" name="jam_kembali" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_lokasi">Lokasi</label>
+                        <input type="text" class="form-control" id="edit_lokasi" name="latlong" required> <!-- Ensure the name is 'latlong' -->
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_file">File</label>
+                        <input type="file" class="form-control" id="edit_file" name="file">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function populateEditModal(id, nama_kegiatan, jam_kembali, lokasi, foto) {
+    document.querySelector('#editDataForm').action = "<?php echo site_url('activity/editActivity/'); ?>" + id;
+    document.querySelector('#edit_id').value = id;
+    document.querySelector('#edit_nama_kegiatan').value = nama_kegiatan;
+    document.querySelector('#edit_jam_kembali').value = jam_kembali;
+    document.querySelector('#edit_lokasi').value = lokasi; // Ensure the field ID matches
+    // handle file input if needed
+}
+</script>
+

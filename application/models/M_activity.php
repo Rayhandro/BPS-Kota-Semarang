@@ -11,4 +11,17 @@ class M_Activity extends CI_Model
     public function insert_activity($data) {
         return $this->db->insert('activity', $data);
     }
+    public function get_activity_by_id($id) {
+        return $this->db->get_where('activity', array('id' => $id))->row_array();
+    }
+
+    public function update_activity($id, $data) {
+        $this->db->where('id', $id);
+        return $this->db->update('activity', $data);
+    }
+
+    public function delete_activity($id) {
+        $this->db->where('id', $id);
+        return $this->db->delete('activity');
+    }
 } 
