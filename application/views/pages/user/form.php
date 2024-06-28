@@ -37,6 +37,7 @@
 
     <div class="container">
 
+
         <!-- Outer Row -->
         <div class="row justify-content-center">
             <div class="col-xl-10 col-lg-12 col-md-9">
@@ -45,48 +46,62 @@
                     <div class="col-lg-7 mx-auto">
                         <!-- card -->
                         <div class="py-5 px-2">
+                            <?php if ($this->session->flashdata('message')) : ?>
+                                <div class="alert alert-<?= $this->session->flashdata('message_type') ?> alert-dismissible fade show" role="alert">
+                                    <?= $this->session->flashdata('message') ?>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            <?php endif; ?>
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">Form Izin Keluar/Masuk Kantor</h1>
                             </div>
-                            <form class="myForm">
+                            <form class="myForm" method="post" enctype="multipart/form-data" action="<?php echo site_url('/activity/addActivity'); ?>">
                                 <div class="form-group">
-                                    <label class="label">Nama Karyawan :</label>
-                                    <input type="text" class="form-control form-control-user" placeholder="Masukkan nama karyawan" required>
+                                    <label class="label">Tipe Form :</label>
+                                    <select id="tipe_form" name="tipe_form" class="form-control form-control-user" onchange="loadKegiatanOptions()">
+                                        <option value="keluar">Keluar</option>
+                                        <option value="pelaksanaan">Pelaksanaan</option>
+                                        <option value="kembali">Kembali</option>
+                                    </select>
                                 </div>
-
                                 <div class="form-group">
-                                    <label class="label">Kegiatan :</label>
-                                    <input type="text" class="form-control form-control-user" placeholder="Masukkan nama kegiatan" required>
+                                    <label for="id_user">Nama Pegawai</label>
+                                    <input type="text" class="form-control" disabled id="id_user" name="nama" value="<?= $username; ?>" required>
+                                    <input type="text" class="form-control" id="id_user" name="id_user" hidden value="<?= $user_id; ?>" required>
                                 </div>
-
+                                <div class="form-group" id="nama_kegiatan_group">
+                                    <label for="nama_kegiatan">Nama Kegiatan</label>
+                                    <input type="text" class="form-control" id="kegiatan_keluar" name="nama_kegiatan" required>
+                                    <select class="form-control" id="kegiatan_pelaksanaan" disabled name="nama_kegiatan" required>
+                                        <?php foreach ($pelaksanaan as $act) : ?>
+                                            <option value="<?php echo $act['id_kegiatan'] ?>"><?= $act['nama_kegiatan']; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <select class="form-control" id="kegiatan_kembali" disabled name="nama_kegiatan" required>
+                                        <?php foreach ($kembali as $act) : ?>
+                                            <option value="<?php echo $act['id_kegiatan'] ?>"><?= $act['nama_kegiatan']; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
                                 <div class="form-group">
-                                    <label class="label">Tanggal :</label>
-                                    <input type="date" class="form-control form-control-user" placeholder="Masukkan tanggal" required>
+                                    <label for="tanggal">Tanggal</label>
+                                    <input type="date" class="form-control" id="tanggal" name="tanggal" required>
                                 </div>
-
-                                <div class="form-group">
-                                    <label class="label">Jam Keluar :</label>
-                                    <input type="time" class="form-control form-control-user" placeholder="Masukkan jam keluar" required>
+                                <div class="form-group" id="jam_keluar_group">
+                                    <label for="waktu">Jam</label>
+                                    <input type="time" class="form-control" id="waktu" name="jam">
                                 </div>
-
-                                <div class="form-group">
-                                    <label class="label">Jam Kembali :</label>
-                                    <input type="time" class="form-control form-control-user" placeholder="Masukkan jam kembali" required>
+                                <div class="form-group" id="latlong_group">
+                                    <label for="latlong">Lokasi</label>
+                                    <input type="text" class="form-control" id="lokasi" name="lokasi">
                                 </div>
-
-                                <div class="form-group">
-                                    <label class="label">Lokasi :</label>
-                                    <input type="text" name="latitude" value="" class="form-control form-control-user">
+                                <div class="form-group" id="foto_group">
+                                    <label for="file">File</label>
+                                    <input type="file" class="form-control" id="file" name="file">
                                 </div>
-
-                                <div class="form-group">
-                                    <label class="label">Foto :</label>
-                                    <input type="file" class="form-control-image">
-                                </div>
-                                <hr>
-                                <button type="submit" name="submit" href="index.html" class="btn btn-primary btn-user btn-block">
-                                    Submit
-                                </button>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
                             </form>
                             <hr>
                         </div>
@@ -113,7 +128,7 @@
             let longitude = position.coords.longitude;
             let combined = latitude + "," + longitude;
 
-            document.querySelector('.myForm input[name="latitude"]').value = combined;
+            document.querySelector('.myForm input[name="lokasi"]').value = combined;
         }
 
 
@@ -125,6 +140,57 @@
                     break;
             }
         }
+
+        function toggleTimeInputs() {
+            var tipeForm = document.getElementById("tipe_form").value;
+            var latlongGroup = document.getElementById("latlong_group");
+            var fotoGroup = document.getElementById("foto_group");
+            var nama_kegiatan_group = document.getElementById("nama_kegiatan_group");
+
+            latlongGroup.style.display = "none";
+            fotoGroup.style.display = "none";
+
+            if (tipeForm === "kembali") {
+                latlongGroup.style.display = "none";
+                fotoGroup.style.display = "none";
+                document.getElementById("kegiatan_pelaksanaan").setAttribute("disabled", "disabled");
+                document.getElementById("kegiatan_pelaksanaan").setAttribute("hidden", "hidden");
+                document.getElementById("kegiatan_keluar").setAttribute("disabled", "disabled");
+                document.getElementById("kegiatan_keluar").setAttribute("hidden", "hidden");
+                document.getElementById("kegiatan_kembali").removeAttribute("disabled");
+                document.getElementById("kegiatan_kembali").removeAttribute("hidden");
+            } else if (tipeForm === "keluar") {
+                latlongGroup.style.display = "none";
+                fotoGroup.style.display = "none";
+                document.getElementById("kegiatan_pelaksanaan").setAttribute("disabled", "disabled");
+                document.getElementById("kegiatan_pelaksanaan").setAttribute("hidden", "hidden");
+                document.getElementById("kegiatan_kembali").setAttribute("disabled", "disabled");
+                document.getElementById("kegiatan_kembali").setAttribute("hidden", "hidden");
+                document.getElementById("kegiatan_keluar").removeAttribute("disabled");
+                document.getElementById("kegiatan_keluar").removeAttribute("hidden");
+
+                // nama_kegiatan_group.innerHTML('<label for="nama_kegiatan">Nama Kegiatan</label><input type="text" class="form-control" id="nama_kegiatan" name="nama_kegiatan" required>');
+            } else if (tipeForm === "pelaksanaan") {
+                latlongGroup.style.display = "block";
+                fotoGroup.style.display = "block";
+                document.getElementById("kegiatan_kembali").setAttribute("disabled", "disabled");
+                document.getElementById("kegiatan_kembali").setAttribute("hidden", "hidden");
+                document.getElementById("kegiatan_keluar").setAttribute("disabled", "disabled");
+                document.getElementById("kegiatan_keluar").setAttribute("hidden", "hidden");
+                document.getElementById("file").setAttribute("required", "required");
+                // document.getElementById("kegiatan_keluar").setAttribute("hidden", "hidden");
+                document.getElementById("kegiatan_pelaksanaan").removeAttribute("disabled");
+                document.getElementById("kegiatan_pelaksanaan").removeAttribute("hidden");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            toggleTimeInputs();
+        });
+
+        document.getElementById("tipe_form").addEventListener("change", function() {
+            toggleTimeInputs();
+        });
     </script>
 
     <!-- Bootstrap core JavaScript-->
@@ -137,21 +203,6 @@
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- Toggle Password Visibility -->
-    <script>
-        const togglePassword = document.querySelector('#togglePassword');
-        const password = document.querySelector('#password');
-        togglePassword.addEventListener('click', () => {
-            // Toggle the type attribute using
-            // getAttribure() method
-            const type = password
-                .getAttribute('type') === 'password' ?
-                'text' : 'password';
-            password.setAttribute('type', type);
-            // Toggle the eye and bi-eye icon
-            this.classList.toggle('fa-eye-slash');
-        });
-    </script>
 
 </body>
 

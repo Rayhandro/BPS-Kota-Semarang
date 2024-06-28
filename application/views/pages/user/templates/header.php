@@ -33,7 +33,7 @@
                     <a class="nav-link btn px-3" href="#">Profil <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link btn btn-danger text-light px-3 rounded-pill" href="login.html">Keluar</a>
+                    <a class="nav-link btn btn-danger text-light px-3 rounded-pill" href="<?php echo site_url('auth/logout'); ?>">Keluar</a>
                 </li>
             </ul>
         </div>

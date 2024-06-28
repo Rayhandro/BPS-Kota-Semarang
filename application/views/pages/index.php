@@ -7,7 +7,7 @@
         </div>
     </div>
     <div class="card-body">
-        <?php if ($this->session->flashdata('message')): ?>
+        <?php if ($this->session->flashdata('message')) : ?>
             <div class="alert alert-<?php echo $this->session->flashdata('message_type'); ?> alert-dismissible fade show" role="alert">
                 <?php echo $this->session->flashdata('message'); ?>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -22,23 +22,25 @@
                         <th>No</th>
                         <th>ID</th>
                         <th>Username</th>
+                        <th>Nama Pegawai</th>
                         <th>Password</th>
                         <th>Role</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php 
+                    <?php
                     $no = 1;
                     foreach ($user as $user) : ?>
                         <tr>
                             <td><?php echo $no++; ?></td>
                             <td><?php echo $user['id']; ?></td>
                             <td><?php echo $user['username']; ?></td>
+                            <td><?php echo $user['nama_pegawai']; ?></td>
                             <td><?php echo $user['password']; ?></td>
                             <td><?php echo $user['role']; ?></td>
                             <td>
-                                <button class="btn btn-warning" data-toggle="modal" data-target="#modal-edit" onclick="populateEditModal('<?php echo $user['id']; ?>', '<?php echo $user['username']; ?>', '<?php echo $user['role']; ?>')">Edit</button>
+                                <button class="btn btn-warning" data-toggle="modal" data-target="#modal-edit" onclick="populateEditModal('<?php echo $user['id']; ?>', '<?php echo $user['username']; ?>','<?php echo $user['nama_pegawai']; ?>', '<?php echo $user['role']; ?>')">Edit</button>
                                 <a href="<?php echo site_url('auth/deleteUser/' . $user['id']); ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
                             </td>
                         </tr>
@@ -67,6 +69,10 @@
                         <input type="text" class="form-control" id="username" name="username" required>
                     </div>
                     <div class="form-group">
+                        <label for="nama">Nama Pegawai</label>
+                        <input type="text" class="form-control" id="username" name="nama" required>
+                    </div>
+                    <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
@@ -76,7 +82,11 @@
                     </div>
                     <div class="form-group">
                         <label for="role">Role</label>
-                        <input type="text" class="form-control" id="role" name="role" required>
+                        <!-- <input type="text" class="form-control" id="role" name="role" required> -->
+                        <Select class="form-control" name="role">
+                            <option value="staff">Staff</option>
+                            <option value="admin">Admin</option>
+                        </Select>
                     </div>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </form>
@@ -104,6 +114,10 @@
                         <input type="text" class="form-control" id="edit_username" name="username" required>
                     </div>
                     <div class="form-group">
+                        <label for="edit_name">Nama Pegawai</label>
+                        <input type="text" class="form-control" id="edit_name" name="nama" required>
+                    </div>
+                    <div class="form-group">
                         <label for="edit_password">Password</label>
                         <input type="password" class="form-control" id="edit_password" name="password">
                     </div>
@@ -113,7 +127,10 @@
                     </div>
                     <div class="form-group">
                         <label for="edit_role">Role</label>
-                        <input type="text" class="form-control" id="edit_role" name="role" required>
+                        <Select class="form-control" name="role">
+                            <option value="staff">Staff</option>
+                            <option value="admin">Admin</option>
+                        </Select>
                     </div>
                     <button type="submit" class="btn btn-primary">Update</button>
                 </form>
@@ -123,10 +140,11 @@
 </div>
 
 <script>
-function populateEditModal(id, username, role) {
-    document.querySelector('#editDataForm').action = "<?php echo site_url('auth/editUser/'); ?>" + id;
-    document.querySelector('#edit_id').value = id;
-    document.querySelector('#edit_username').value = username;
-    document.querySelector('#edit_role').value = role;
-}
+    function populateEditModal(id, username, name, role) {
+        document.querySelector('#editDataForm').action = "<?php echo site_url('auth/editUser/'); ?>" + id;
+        document.querySelector('#edit_id').value = id;
+        document.querySelector('#edit_username').value = username;
+        document.querySelector('#edit_name').value = name;
+        document.querySelector('#edit_role').value = role;
+    }
 </script>

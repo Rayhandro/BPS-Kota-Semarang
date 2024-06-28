@@ -1,39 +1,45 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Auth extends CI_Controller {
-    
-    public function __construct() {
+class Auth extends CI_Controller
+{
+
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('M_user');
         $this->load->library('form_validation');
         $this->load->library('session');
     }
-    public function addUser() {
+    public function addUser()
+    {
         $this->form_validation->set_rules('username', 'Username', 'required');
+        $this->form_validation->set_rules('nama', 'Nama', 'required');
         $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
         $this->form_validation->set_rules('password_confirm', 'Password Confirmation', 'required|matches[password]');
-    
+
         if ($this->form_validation->run() == FALSE) {
             $this->load->view('pages/register');
         } else {
             $data = array(
                 'username' => $this->input->post('username'),
+                'nama_pegawai' => $this->input->post('nama'),
                 'password' => password_hash($this->input->post('password'), PASSWORD_BCRYPT),
-                'role' => 'staff'
+                'role' => $this->input->post('role'),
             );
 
             if ($this->M_user->register($data)) {
                 $this->session->set_flashdata('message', 'Registration successful! Please login.');
-                redirect('pages/login');
+                redirect('pages/');
             } else {
                 $this->session->set_flashdata('message', 'Registration failed! Please try again.');
-                redirect('pages/register');
+                redirect('pages/');
             }
         }
     }
 
-    public function login() {
+    public function login()
+    {
         $this->form_validation->set_rules('username', 'Username', 'required');
         $this->form_validation->set_rules('password', 'Password', 'required');
 
@@ -48,10 +54,19 @@ class Auth extends CI_Controller {
                 $session_data = array(
                     'user_id' => $user->id,
                     'username' => $user->username,
+                    'role' => $user->role, // Pastikan role juga disimpan dalam session
                     'logged_in' => TRUE
                 );
                 $this->session->set_userdata($session_data);
-                redirect('/'); // Ubah ke halaman setelah login yang sesuai
+
+                // Redirect berdasarkan role pengguna
+                if ($user->role == 'admin') {
+                    redirect('/'); // Ganti dengan URL halaman admin
+                } elseif ($user->role == 'staff') {
+                    redirect('user/index'); // Ganti dengan URL halaman user
+                } else {
+                    redirect('/login'); // Ganti dengan URL default setelah login
+                }
             } else {
                 $this->session->set_flashdata('message', 'Invalid username or password');
                 redirect('pages/login');
@@ -59,13 +74,16 @@ class Auth extends CI_Controller {
         }
     }
 
-    public function logout() {
+    public function logout()
+    {
         $this->session->sess_destroy();
-        redirect('authcontroller/login');
+        redirect('/login');
     }
 
-    public function register() {
+    public function register()
+    {
         $this->form_validation->set_rules('username', 'Username', 'required');
+        $this->form_validation->set_rules('nama', 'Nama', 'required');
         $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
         $this->form_validation->set_rules('password_confirm', 'Password Confirmation', 'required|matches[password]');
         // $this->form_validation->set_rules('role', 'Role', 'required');
@@ -75,6 +93,7 @@ class Auth extends CI_Controller {
         } else {
             $data = array(
                 'username' => $this->input->post('username'),
+                'nama_pegawai' => $this->input->post('nama'),
                 'password' => password_hash($this->input->post('password'), PASSWORD_BCRYPT),
                 'role' => 'staff'
             );
@@ -88,7 +107,8 @@ class Auth extends CI_Controller {
             }
         }
     }
-    public function deleteUser($id) {
+    public function deleteUser($id)
+    {
         if ($this->M_user->deleteUser($id)) {
             $this->session->set_flashdata('message', 'User deleted successfully!');
         } else {
@@ -96,17 +116,18 @@ class Auth extends CI_Controller {
         }
         redirect('/');
     }
-    public function editUser($id) {
+    public function editUser($id)
+    {
         $data['user'] = $this->M_user->getUserById($id);
-    
+
         $this->form_validation->set_rules('username', 'Username', 'required');
         $this->form_validation->set_rules('role', 'Role', 'required');
-    
+
         if ($this->input->post('password')) {
             $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
             $this->form_validation->set_rules('password_confirm', 'Password Confirmation', 'required|matches[password]');
         }
-    
+
         if ($this->form_validation->run() == FALSE) {
             $this->session->set_flashdata('message', validation_errors());
             $this->session->set_flashdata('message_type', 'danger');
@@ -114,13 +135,14 @@ class Auth extends CI_Controller {
         } else {
             $update_data = array(
                 'username' => $this->input->post('username'),
+                'nama_pegawai' => $this->input->post('nama'),
                 'role' => $this->input->post('role')
             );
-    
+
             if ($this->input->post('password')) {
                 $update_data['password'] = password_hash($this->input->post('password'), PASSWORD_BCRYPT);
             }
-    
+
             if ($this->M_user->updateUser($id, $update_data)) {
                 $this->session->set_flashdata('message', 'User updated successfully!');
                 $this->session->set_flashdata('message_type', 'success');
@@ -128,10 +150,8 @@ class Auth extends CI_Controller {
                 $this->session->set_flashdata('message', 'Update failed! Please try again.');
                 $this->session->set_flashdata('message_type', 'danger');
             }
-    
+
             redirect('/');
         }
     }
-    
-    
 }

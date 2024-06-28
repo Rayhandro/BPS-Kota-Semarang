@@ -51,6 +51,11 @@
                                                 placeholder="Enter Username...">
                                         </div>
                                         <div class="form-group">
+                                            <input type="text" class="form-control form-control-user"
+                                                id="exampleInputEmail" name="username" aria-describedby="emailHelp"
+                                                placeholder="Enter Name...">
+                                        </div>
+                                        <div class="form-group">
                                             <input type="password" class="form-control form-control-user"
                                                 id="exampleInputPassword" name="password" placeholder="Password">
                                         </div>

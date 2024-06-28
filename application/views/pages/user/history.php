@@ -29,53 +29,57 @@
                 <thead>
                     <tr>
                         <th>Tanggal Waktu</th>
+                        <th>Waktu</th>
                         <th>Nama Kegiatan</th>
                         <th>Detail</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>2024-06-25 10:00</td>
-                        <td>Meeting Project A</td>
-                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#detailModal1">Lihat Detail</button></td>
-                    </tr>
-                    <tr>
-                        <td>2024-06-25 10:00</td>
-                        <td>Meeting Project A</td>
-                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#detailModal1">Lihat Detail</button></td>
-                    </tr>
-                    <!-- Repeat for more history entries -->
+                    <?php if (!empty($history)) : ?>
+                        <?php foreach ($history as $entry) : ?>
+                            <tr>
+                                <td><?php echo $entry['tanggal']; ?> </td>
+                                <td><?php echo $entry['jam_keluar']; ?></td>
+                                <td><?php echo $entry['nama_kegiatan']; ?></td>
+                                <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#detailModal<?php echo $entry['id']; ?>">Lihat Detail</button></td>
+                            </tr>
+                            <!-- Modal -->
+                            <div class="modal fade" id="detailModal<?php echo $entry['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel<?php echo $entry['id']; ?>" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="detailModalLabel<?php echo $entry['id']; ?>">Detail Pengisian Form</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p><strong>Nama Karyawan:</strong> <?php echo $entry['nama_pegawai']; ?></p>
+                                            <p><strong>Nama Kegiatan:</strong> <?php echo $entry['nama_kegiatan']; ?></p>
+                                            <p><strong>Tanggal:</strong> <?php echo $entry['tanggal']; ?></p>
+                                            <p><strong>Jam Keluar:</strong> <?php echo $entry['jam_keluar']; ?></p>
+                                            <p><strong>Jam Kembali:</strong> <?php echo $entry['jam_kembali']; ?></p>
+                                            <p><strong>Lokasi:<iframe scrolling="no" style="width: 100%; height: 100%;" src="https://www.google.com/maps?q=<?php echo $entry["latlong"]; ?>&hl=es;z=14&output=embed"></iframe></p>
+                                            <p><strong>Foto Bukti:</strong></p>
+                                            <img src="<?php echo base_url('uploads/' . $entry['foto']); ?>" class="img-fluid" alt="Foto Bukti">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                        <tr>
+                            <td colspan="3">No history found</td>
+                        </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
-
-        <!-- Modal -->
-        <div class="modal fade" id="detailModal1" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel1" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="detailModalLabel1">Detail Pengisian Form</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p><strong>Nama Karyawan:</strong> John Doe</p>
-                        <p><strong>Nama Kegiatan:</strong> Meeting Project A</p>
-                        <p><strong>Tanggal:</strong> 2024-06-25</p>
-                        <p><strong>Jam Keluar:</strong> 10:00</p>
-                        <p><strong>Jam Kembali:</strong> 12:00</p>
-                        <p><strong>Lokasi:</strong> Kantor Pusat</p>
-                        <p><strong>Foto Bukti:</strong></p>
-                        <img src="bukti.jpg" class="img-fluid" alt="Foto Bukti">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
+
 
     <!-- Footer -->
     <footer class="footer mb-0">
