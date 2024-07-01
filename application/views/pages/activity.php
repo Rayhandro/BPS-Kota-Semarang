@@ -43,8 +43,30 @@
                             <td><?php echo $activity['nama_kegiatan'] ?></td>
                             <td><?php echo $activity['tanggal'] ?></td>
                             <td><?php echo date('H:i', strtotime($activity['jam_keluar'])); ?></td>
-                            <td><?php echo date('H:i', strtotime($activity['jam_pelaksanaan'])); ?></td>
-                            <td><?php echo date('H:i', strtotime($activity['jam_kembali'])); ?></td>
+                            <?php
+                            if (is_null($activity['jam_pelaksanaan'])) {
+                            ?>
+                                <td>-</td>
+                            <?php
+                            } else {
+                            ?>
+                                <td><?php echo date('H:i', strtotime($activity['jam_pelaksanaan'])); ?></td>
+                            <?php
+                            }
+                            ?>
+
+                            <?php
+                            if (is_null($activity['jam_kembali'])) {
+                            ?>
+                                <td>-</td>
+                            <?php
+                            } else {
+                            ?>
+                                <td><?php echo date('H:i', strtotime($activity['jam_kembali'])); ?></td>
+                            <?php
+                            }
+                            ?>
+
                             <td class="text-center">
                                 <button class="btn btn-info" data-toggle="modal" data-target="#modal-latlong">Lokasi</button>
                                 <!-- <?php echo $activity['latlong'] ?> -->

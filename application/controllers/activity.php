@@ -162,9 +162,9 @@ class Activity extends CI_Controller
         $data['activity'] = $this->M_activity->get_activity_by_id($id);
 
         $this->form_validation->set_rules('nama_kegiatan', 'Nama Kegiatan', 'required');
-        $this->form_validation->set_rules('jam_keluar', 'Jam', 'required');
-        $this->form_validation->set_rules('jam_pelaksanaan', 'Jam', 'required');
-        $this->form_validation->set_rules('jam_kembali', 'Jam', 'required');
+        $this->form_validation->set_rules('jam_keluar', 'Jam');
+        $this->form_validation->set_rules('jam_pelaksanaan', 'Jam');
+        $this->form_validation->set_rules('jam_kembali', 'Jam');
         // $this->form_validation->set_rules('latlong', 'Lokasi', 'required');  // Ensure 'latlong' is used if that's the input name
 
         if ($this->form_validation->run() == FALSE) {

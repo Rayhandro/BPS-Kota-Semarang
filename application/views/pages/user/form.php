@@ -57,10 +57,11 @@
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">Form Izin Keluar/Masuk Kantor</h1>
                             </div>
-                            <form class="myForm" method="post" enctype="multipart/form-data" action="<?php echo site_url('/activity/addActivity'); ?>">
+
+                            <form class="myForm" method="post" enctype="multipart/form-data" action="<?php echo site_url('/activity/editActivity'); ?>/<?= $user_id; ?>">
                                 <div class="form-group">
                                     <label class="label">Tipe Form :</label>
-                                    <select id="tipe_form" name="tipe_form" class="form-control form-control-user" onchange="loadKegiatanOptions()">
+                                    <select id="tipe_form" name="tipe_form" class="form-control form-control-user" onchange="updateFormAction()">
                                         <option value="keluar">Keluar</option>
                                         <option value="pelaksanaan">Pelaksanaan</option>
                                         <option value="kembali">Kembali</option>
@@ -68,7 +69,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="id_user">Nama Pegawai</label>
-                                    <input type="text" class="form-control" disabled id="id_user" name="nama" value="<?= $username; ?>" required>
+                                    <input type="text" class="form-control" disabled name="nama" value="<?= $username; ?>" required>
                                     <input type="text" class="form-control" id="id_user" name="id_user" hidden value="<?= $user_id; ?>" required>
                                 </div>
                                 <div class="form-group" id="nama_kegiatan_group">
@@ -91,7 +92,7 @@
                                 </div>
                                 <div class="form-group" id="jam_keluar_group">
                                     <label for="waktu">Jam</label>
-                                    <input type="time" class="form-control" id="waktu" name="jam">
+                                    <input type="time" class="form-control" id="waktu" name="jam_keluar">
                                 </div>
                                 <div class="form-group" id="latlong_group">
                                     <label for="latlong">Lokasi</label>
@@ -115,6 +116,18 @@
     </div>
 
     <script>
+        // function updateFormAction() {
+        //     var tipeForm = document.getElementById('tipe_form').value;
+        //     var form = document.getElementById('myForm');
+        //     var id = "123"; // Replace this with the actual ID you want to edit
+
+        //     if (tipeForm === 'keluar') {
+        //         form.action = "<?php echo site_url('/activity/addActivity'); ?>";
+        //     } else if (tipeForm === 'pelaksanaan' || tipeForm === 'kembali') {
+        //         form.action = "<?php echo site_url('/activity/editActivity/'); ?>" + id;
+        //     }
+        // }
+
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition, showError);
@@ -146,6 +159,8 @@
             var latlongGroup = document.getElementById("latlong_group");
             var fotoGroup = document.getElementById("foto_group");
             var nama_kegiatan_group = document.getElementById("nama_kegiatan_group");
+            var idUser = document.getElementById('id_user').value;
+            var form = document.getElementById('myForm');
 
             latlongGroup.style.display = "none";
             fotoGroup.style.display = "none";
@@ -159,7 +174,9 @@
                 document.getElementById("kegiatan_keluar").setAttribute("hidden", "hidden");
                 document.getElementById("kegiatan_kembali").removeAttribute("disabled");
                 document.getElementById("kegiatan_kembali").removeAttribute("hidden");
+                // form.action = "<?php echo site_url('/activity/addActivity'); ?>";
             } else if (tipeForm === "keluar") {
+                // form.action = "<?php echo site_url('/activity/editActivity/'); ?>" + idUser;
                 latlongGroup.style.display = "none";
                 fotoGroup.style.display = "none";
                 document.getElementById("kegiatan_pelaksanaan").setAttribute("disabled", "disabled");
@@ -171,6 +188,7 @@
 
                 // nama_kegiatan_group.innerHTML('<label for="nama_kegiatan">Nama Kegiatan</label><input type="text" class="form-control" id="nama_kegiatan" name="nama_kegiatan" required>');
             } else if (tipeForm === "pelaksanaan") {
+                // form.action = "<?php echo site_url('/activity/editActivity/'); ?>" + idUser;
                 latlongGroup.style.display = "block";
                 fotoGroup.style.display = "block";
                 document.getElementById("kegiatan_kembali").setAttribute("disabled", "disabled");
