@@ -36,60 +36,26 @@
                     $no = 1;
                     foreach ($activity as $activity) : ?>
                         <tr>
-                            <?php
-                            if ($activity['tipe_form'] == 'keluar') {
-                            ?>
 
-                                <td rowspan="<?= $activity['count']; ?>"><?php echo $no++; ?></td>
-                            <?php
-                            }
-                            ?>
+                            <td><?php echo $no++; ?></td>
                             <td><?php echo $activity['username'] ?></td>
                             <td><?php echo $activity['tipe_form'] ?></td>
                             <td><?php echo $activity['nama_kegiatan'] ?></td>
                             <td><?php echo $activity['tanggal'] ?></td>
-                            <?php
-                            if ($activity['tipe_form'] == 'keluar') {
-                            ?>
+                            <td><?php echo date('H:i', strtotime($activity['jam_keluar'])); ?></td>
+                            <td><?php echo date('H:i', strtotime($activity['jam_pelaksanaan'])); ?></td>
+                            <td><?php echo date('H:i', strtotime($activity['jam_kembali'])); ?></td>
+                            <td class="text-center">
+                                <button class="btn btn-info" data-toggle="modal" data-target="#modal-latlong">Lokasi</button>
+                                <!-- <?php echo $activity['latlong'] ?> -->
+                            </td>
+                            <td>
+                                <img src="<?= base_url('/uploads/' . $activity['foto']) ?>" alt="" width="150" height="150">
 
-                                <td><?php echo date('H:i', strtotime($activity['jam'])); ?></td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
-                            <?php
-
-
-                            } else if ($activity['tipe_form'] == 'pelaksanaan') {
-                            ?>
-                                <td>-</td>
-                                <td><?php echo date('H:i', strtotime($activity['jam'])); ?></td>
-                                <td>-</td>
-                                <td class="text-center">
-                                    <button class="btn btn-info" data-toggle="modal" data-target="#modal-latlong">Lokasi</button>
-                                    <!-- <?php echo $activity['latlong'] ?> -->
-                                </td>
-                                <td>
-                                    <img src="<?= base_url('/uploads/' . $activity['foto']) ?>" alt="" width="150" height="150">
-
-                                </td>
-                            <?php
-
-                            } else if ($activity['tipe_form'] == 'kembali') {
-
-                            ?>
-                                <td>-</td>
-                                <td>-</td>
-                                <td><?php echo date('H:i', strtotime($activity['jam'])); ?></td>
-                                <td>-</td>
-                                <td>-</td>
-                            <?php
-                            }
-
-                            ?>
+                            </td>
 
                             <td class="text-center">
-                                <button class="btn btn-warning px-4" data-toggle="modal" data-target="#modal-edit" onclick="populateEditModal('<?php echo $activity['id'] ?>','<?php echo $activity['id_kegiatan'] ?>', '<?php echo $activity['nama_kegiatan'] ?>', '<?php echo $activity['jam'] ?>', '<?php echo $activity['latlong'] ?>', '<?php echo $activity['foto'] ?>')">Edit</button>
+                                <button class="btn btn-warning px-4" data-toggle="modal" data-target="#modal-edit" onclick="populateEditModal('<?php echo $activity['id'] ?>','<?php echo $activity['id_kegiatan'] ?>', '<?php echo $activity['nama_kegiatan'] ?>', '<?php echo $activity['jam_keluar'] ?>', '<?php echo $activity['jam_pelaksanaan'] ?>', '<?php echo $activity['jam_kembali'] ?>', '<?php echo $activity['latlong'] ?>', '<?php echo $activity['foto'] ?>')">Edit</button>
                                 <a href="<?php echo site_url('activity/deleteActivity/' . $activity['id']); ?>" class="btn btn-danger px-3 mt-2" onclick="return confirm('Are you sure you want to delete this activity?');">Delete</a>
                             </td>
                         </tr>
@@ -133,7 +99,15 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="edit_jam_kembali">Jam</label>
-                                                <input type="time" class="form-control" id="edit_jam" name="jam" required>
+                                                <input type="time" class="form-control" id="edit_jam_keluar" name="jam_keluar" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="edit_jam_kembali">Jam</label>
+                                                <input type="time" class="form-control" id="edit_jam_pelaksanaan" name="jam_pelaksanaan" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="edit_jam_kembali">Jam</label>
+                                                <input type="time" class="form-control" id="edit_jam_kembali" name="jam_kembali" required>
                                             </div>
                                             <!-- <div class="form-group" id="latlong_group">
                                                 <label for="edit_lokasi">Lokasi</label>
@@ -205,8 +179,16 @@
                         <input type="date" class="form-control" id="tanggal" name="tanggal" required>
                     </div>
                     <div class="form-group" id="jam_keluar_group">
-                        <label for="waktu">Jam</label>
-                        <input type="time" class="form-control" id="waktu" name="jam">
+                        <label for="waktu">Jam Keluar</label>
+                        <input type="time" class="form-control" id="waktu" name="jam_keluar">
+                    </div>
+                    <div class="form-group" id="jam_keluar_group">
+                        <label for="waktu">Jam Pelaksanaan</label>
+                        <input type="time" class="form-control" id="waktu" name="jam_pelaksanaan">
+                    </div>
+                    <div class="form-group" id="jam_keluar_group">
+                        <label for="waktu">Jam Masuk</label>
+                        <input type="time" class="form-control" id="waktu" name="jam_kembali">
                     </div>
                     <div class="form-group" id="latlong_group">
                         <label for="latlong">Lokasi</label>
@@ -226,12 +208,14 @@
 
 
 <script>
-    function populateEditModal(id,id_kegiatan, nama_kegiatan, jam, lokasi, foto) {
+    function populateEditModal(id, id_kegiatan, nama_kegiatan, jam_keluar, jam_pelaksanaan, jam_kembali, lokasi, foto) {
         document.querySelector('#editDataForm').action = "<?php echo site_url('activity/editActivity/'); ?>" + id;
         document.querySelector('#edit_id').value = id;
         document.querySelector('#edit_id_kegiatan').value = id_kegiatan;
         document.querySelector('#edit_nama_kegiatan').value = nama_kegiatan;
-        document.querySelector('#edit_jam').value = jam;
+        document.querySelector('#edit_jam_keluar').value = jam_keluar;
+        document.querySelector('#edit_jam_pelaksanaan').value = jam_pelaksanaan;
+        document.querySelector('#edit_jam_kembali').value = jam_kembali;
         document.querySelector('#edit_lokasi').value = lokasi; // Ensure the field ID matches
         // handle file input if needed
     }

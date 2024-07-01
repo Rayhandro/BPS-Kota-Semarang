@@ -40,7 +40,9 @@ class Activity extends CI_Controller
         $this->form_validation->set_rules('tipe_form', 'Tipe Form', 'required');
         $this->form_validation->set_rules('nama_kegiatan', 'Nama Kegiatan', 'required');
         $this->form_validation->set_rules('tanggal', 'Tanggal', 'required');
-        $this->form_validation->set_rules('jam', 'Jam', 'required');
+        $this->form_validation->set_rules('jam_keluar', 'Jam');
+        $this->form_validation->set_rules('jam_pelaksanaan', 'Jam');
+        $this->form_validation->set_rules('jam_kembali', 'Jam');
 
         if ($this->form_validation->run() == FALSE) {
             $this->session->set_flashdata('message', 'Data gagal ditambahkan!');
@@ -51,14 +53,14 @@ class Activity extends CI_Controller
             } elseif ($this->session->userdata('role') == 'staff') {
                 redirect('user/form'); // Ganti dengan URL halaman user
             } else {
-                redirect('/login'); 
+                redirect('/login');
             }
         } else {
             $keluar = 0;
             $pelaksanaan = 0;
             $kembali = 0;
 
-            if($this->input->post('tipe_form') == 'keluar'){
+            if ($this->input->post('tipe_form') == 'keluar') {
                 $keluar = 1;
 
                 $data_kgt = array(
@@ -72,7 +74,7 @@ class Activity extends CI_Controller
                 $this->M_kegiatan->insert_kegiatan($data_kgt);
 
                 $id_kegiatan = $this->db->insert_id();
-            }else if($this->input->post('tipe_form') == 'pelaksanaan'){
+            } else if ($this->input->post('tipe_form') == 'pelaksanaan') {
 
                 $data = array(
                     'keluar' => 0,
@@ -80,7 +82,7 @@ class Activity extends CI_Controller
                     'kembali' => 0,
                 );
 
-                $this->M_kegiatan->update_activity($this->input->post('nama_kegiatan'),$data);
+                $this->M_kegiatan->update_activity($this->input->post('nama_kegiatan'), $data);
                 $id_kegiatan = $this->input->post('nama_kegiatan');
             } else if ($this->input->post('tipe_form') == 'kembali') {
                 $data = array(
@@ -88,7 +90,7 @@ class Activity extends CI_Controller
                     'pelaksanaan' => 0,
                     'kembali' => 1,
                 );
-                
+
                 $this->M_kegiatan->update_activity($this->input->post('nama_kegiatan'), $data);
                 $id_kegiatan = $this->input->post('nama_kegiatan');
             }
@@ -98,7 +100,9 @@ class Activity extends CI_Controller
                 'id_kegiatan' => $id_kegiatan,
                 'tipe_form' => $this->input->post('tipe_form'),
                 'tanggal' => $this->input->post('tanggal'),
-                'jam' => $this->input->post('jam'),
+                'jam_keluar' => $this->input->post('jam_keluar'),
+                'jam_pelaksanaan' => $this->input->post('jam_pelaksanaan'),
+                'jam_kembali' => $this->input->post('jam_kembali'),
                 'latlong' => $this->input->post('lokasi'),
                 'foto' => $this->_upload_file() // Handle file upload
             );
@@ -158,7 +162,9 @@ class Activity extends CI_Controller
         $data['activity'] = $this->M_activity->get_activity_by_id($id);
 
         $this->form_validation->set_rules('nama_kegiatan', 'Nama Kegiatan', 'required');
-        $this->form_validation->set_rules('jam', 'Jam', 'required');
+        $this->form_validation->set_rules('jam_keluar', 'Jam', 'required');
+        $this->form_validation->set_rules('jam_pelaksanaan', 'Jam', 'required');
+        $this->form_validation->set_rules('jam_kembali', 'Jam', 'required');
         // $this->form_validation->set_rules('latlong', 'Lokasi', 'required');  // Ensure 'latlong' is used if that's the input name
 
         if ($this->form_validation->run() == FALSE) {
@@ -173,7 +179,13 @@ class Activity extends CI_Controller
                 $update_data_kegiatan['nama_kegiatan'] = $this->input->post('nama_kegiatan');
             }
             if ($this->input->post('jam_kembali')) {
-                $update_data['jam'] = $this->input->post('jam');
+                $update_data['jam_kembali'] = $this->input->post('jam_kembali');
+            }
+            if ($this->input->post('jam_pelaksanaan')) {
+                $update_data['jam_pelaksanaan'] = $this->input->post('jam_pelaksanaan');
+            }
+            if ($this->input->post('jam_keluar')) {
+                $update_data['jam_keluar'] = $this->input->post('jam_keluar');
             }
             // if ($this->input->post('latlong')) {  // Ensure 'latlong' is used if that's the input name
             //     $update_data['latlong'] = $this->input->post('latlong');

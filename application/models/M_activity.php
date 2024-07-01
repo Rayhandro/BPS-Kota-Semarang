@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class M_Activity extends CI_Model
 {
@@ -11,7 +11,7 @@ class M_Activity extends CI_Model
         $this->db->join('tbl_kegiatan', 'tbl_kegiatan.id_kegiatan = activity.id_kegiatan');
         // $this->db->group_by('activity.id_kegiatan');
         $this->db->order_by('id_kegiatan', 'ASC');
-        $this->db->order_by('jam', 'ASC');
+        $this->db->order_by('jam_keluar', 'ASC');
         $query = $this->db->get();
         return $query->result_array();
     }
@@ -23,19 +23,23 @@ class M_Activity extends CI_Model
 
         return $this->db->count_all_results();
     }
-    public function insert_activity($data) {
+    public function insert_activity($data)
+    {
         return $this->db->insert('activity', $data);
     }
-    public function get_activity_by_id($id) {
+    public function get_activity_by_id($id)
+    {
         return $this->db->get_where('activity', array('id' => $id))->row_array();
     }
 
-    public function update_activity($id, $data) {
+    public function update_activity($id, $data)
+    {
         $this->db->where('id', $id);
         return $this->db->update('activity', $data);
     }
 
-    public function delete_activity($id) {
+    public function delete_activity($id)
+    {
         $this->db->where('id', $id);
         return $this->db->delete('activity');
     }
@@ -49,4 +53,4 @@ class M_Activity extends CI_Model
         $query = $this->db->get();
         return $query->result_array();
     }
-} 
+}
