@@ -15,6 +15,13 @@ class M_Activity extends CI_Model
         $query = $this->db->get();
         return $query->result_array();
     }
+    public function get_activities_by_user_and_kegiatan($id_kegiatan, $id_user)
+    {
+        $this->db->where('id_kegiatan', $id_kegiatan);
+        $this->db->where('id_user', $id_user);
+        $query = $this->db->get('activity');
+        return $query->result_array();
+    }
     public function count_activity_by_user_and_kegiatan($id_kegiatan, $id_user)
     {
         $this->db->where('id_kegiatan', $id_kegiatan);
@@ -48,5 +55,14 @@ class M_Activity extends CI_Model
         $this->db->order_by('created_at', 'DESC');
         $query = $this->db->get();
         return $query->result_array();
+    }
+    public function get_file_name($id)
+    {
+        $this->db->select('foto');  // Adjust this to match your column name for file paths
+        $this->db->from('activity');  // Adjust this to match your table name
+        $this->db->where('id', $id);
+        $query = $this->db->get();
+        $result = $query->row();
+        return $result ? $result->file_path : null;
     }
 } 

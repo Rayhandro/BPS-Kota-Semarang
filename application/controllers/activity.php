@@ -51,14 +51,14 @@ class Activity extends CI_Controller
             } elseif ($this->session->userdata('role') == 'staff') {
                 redirect('user/form'); // Ganti dengan URL halaman user
             } else {
-                redirect('/login'); 
+                redirect('/login');
             }
         } else {
             $keluar = 0;
             $pelaksanaan = 0;
             $kembali = 0;
 
-            if($this->input->post('tipe_form') == 'keluar'){
+            if ($this->input->post('tipe_form') == 'keluar') {
                 $keluar = 1;
 
                 $data_kgt = array(
@@ -72,7 +72,7 @@ class Activity extends CI_Controller
                 $this->M_kegiatan->insert_kegiatan($data_kgt);
 
                 $id_kegiatan = $this->db->insert_id();
-            }else if($this->input->post('tipe_form') == 'pelaksanaan'){
+            } else if ($this->input->post('tipe_form') == 'pelaksanaan') {
 
                 $data = array(
                     'keluar' => 0,
@@ -80,7 +80,7 @@ class Activity extends CI_Controller
                     'kembali' => 0,
                 );
 
-                $this->M_kegiatan->update_activity($this->input->post('nama_kegiatan'),$data);
+                $this->M_kegiatan->update_activity($this->input->post('nama_kegiatan'), $data);
                 $id_kegiatan = $this->input->post('nama_kegiatan');
             } else if ($this->input->post('tipe_form') == 'kembali') {
                 $data = array(
@@ -88,7 +88,7 @@ class Activity extends CI_Controller
                     'pelaksanaan' => 0,
                     'kembali' => 1,
                 );
-                
+
                 $this->M_kegiatan->update_activity($this->input->post('nama_kegiatan'), $data);
                 $id_kegiatan = $this->input->post('nama_kegiatan');
             }
@@ -152,13 +152,13 @@ class Activity extends CI_Controller
         }
     }
 
-    public function editActivity($id)
+    public function editActivity($id_keluar = null, $id_pelaksanaan = null, $id_kembali = null)
     {
         $id_kegiatan = $this->input->post('id_kegiatan');
         $data['activity'] = $this->M_activity->get_activity_by_id($id);
 
         $this->form_validation->set_rules('nama_kegiatan', 'Nama Kegiatan', 'required');
-        $this->form_validation->set_rules('jam', 'Jam', 'required');
+        // $this->form_validation->set_rules('jam', 'Jam', 'required');
         // $this->form_validation->set_rules('latlong', 'Lokasi', 'required');  // Ensure 'latlong' is used if that's the input name
 
         if ($this->form_validation->run() == FALSE) {
@@ -166,23 +166,36 @@ class Activity extends CI_Controller
             $this->session->set_flashdata('message_type', 'danger');
             redirect('pages/activity');
         } else {
-            $update_data = array();
+            $update_data_keluar = array();
+            $update_data_pelaksanaan = array();
+            $update_data_kembali = array();
             $update_data_kegiatan = array();
 
             if ($this->input->post('nama_kegiatan')) {
                 $update_data_kegiatan['nama_kegiatan'] = $this->input->post('nama_kegiatan');
             }
-            if ($this->input->post('jam_kembali')) {
-                $update_data['jam'] = $this->input->post('jam');
+            if (!is_null($id_keluar)) {
+                $update_data_keluar['jam'] = $this->input->post('jam_keluar');
+                if(!$this->M_activity->update_activity($id_keluar, $update_data_keluar)){
+                    $this->session->set_flashdata('message', 'Gagal mengupdate data!');
+                    $this->session->set_flashdata('message_type', 'danger');
+                }
             }
-            // if ($this->input->post('latlong')) {  // Ensure 'latlong' is used if that's the input name
-            //     $update_data['latlong'] = $this->input->post('latlong');
-            // }
-            // if (!empty($_FILES['file']['name'])) {
-            //     $update_data['foto'] = $this->_upload_file();
-            // }
-
-            if ($this->M_activity->update_activity($id, $update_data) && $this->M_kegiatan->update_activity($id_kegiatan, $update_data)) {
+            if (!is_null($id_pelaksanaan)) {
+                $update_data_pelaksanaan['jam'] = $this->input->post('jam_pelaksanaan');
+                if (!$this->M_activity->update_activity($id_pelaksanaan, $update_data_pelaksanaan)) {
+                    $this->session->set_flashdata('message', 'Gagal mengupdate data!');
+                    $this->session->set_flashdata('message_type', 'danger');
+                }
+            }
+            if (!is_null($id_kembali)) {
+                $update_data_kembali['jam'] = $this->input->post('jam_kembali');
+                if (!$this->M_activity->update_activity($id_kembali, $update_data_kembali)) {
+                    $this->session->set_flashdata('message', 'Gagal mengupdate data!');
+                    $this->session->set_flashdata('message_type', 'danger');
+                }
+            }
+            if ($this->M_kegiatan->update_activity($id_kegiatan, $update_data_kegiatan)) {
                 $this->session->set_flashdata('message', 'Data berhasil diupdate!');
                 $this->session->set_flashdata('message_type', 'success');
             } else {
@@ -195,9 +208,28 @@ class Activity extends CI_Controller
     }
 
 
-    public function deleteActivity($id)
+    public function deleteActivity($id_kegiatan=null,$id_keluar = null, $id_pelaksanaan = null, $id_kembali = null)
     {
-        if ($this->M_activity->delete_activity($id)) {
+        if(!is_null($id_keluar)){
+            $this->M_activity->delete_activity($id_keluar);
+        }
+        if(!is_null($id_pelaksanaan)){
+            $file_name = $this->M_activity->get_file_name($id_pelaksanaan); // Assuming this method retrieves file name from DB
+            if (!empty($file_name)) {
+                $file_path = FCPATH . '/uploads/' . $file_name; // Adjust this path based on your file storage structure
+                $file = $file_path;
+                if (file_exists($file)) {
+                    unlink($file);
+                }
+            }
+            $this->M_activity->delete_activity($id_pelaksanaan);
+        }
+        if(!is_null($id_kembali)){
+            $this->M_activity->delete_activity($id_kembali);
+        }
+
+        
+        if ($this->M_kegiatan->delete_activity($id_kegiatan)) {
             $this->session->set_flashdata('message', 'Data berhasil dihapus!');
             $this->session->set_flashdata('message_type', 'success');
         } else {

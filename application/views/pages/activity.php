@@ -2,7 +2,7 @@
     <div class="card-header py-3">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">DataTables Activity</h6>
-            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-add">Tambah Data</button>
+            <!-- <button class="btn btn-primary" data-toggle="modal" data-target="#modal-add">Tambah Data</button> -->
         </div>
     </div>
     <div class="card-body">
@@ -34,121 +34,107 @@
                 <tbody>
                     <?php
                     $no = 1;
-                    foreach ($activity as $activity) : ?>
+                    foreach ($activities as $activity) : ?>
                         <tr>
-                            <?php
-                            if ($activity['tipe_form'] == 'keluar') {
-                            ?>
+                            <!-- <?php
+                                    if ($activity['tipe_form'] == 'keluar') {
+                                    ?>
 
                                 <td rowspan="<?= $activity['count']; ?>"><?php echo $no++; ?></td>
-                            <?php
-                            }
-                            ?>
-                            <td><?php echo $activity['username'] ?></td>
-                            <td><?php echo $activity['tipe_form'] ?></td>
-                            <td><?php echo $activity['nama_kegiatan'] ?></td>
-                            <td><?php echo $activity['tanggal'] ?></td>
-                            <?php
-                            if ($activity['tipe_form'] == 'keluar') {
-                            ?>
+                                <?php
+                                    }
+                                ?> -->
+                            <td><?php echo $no++; ?></td>
+                            <!-- <td><?php echo $activity['id_kegiatan']; ?></td> -->
+                            <td><?php echo $activity['username']['username']; ?></td>
+                            <td><?php echo $activity['nama_kegiatan']['nama_kegiatan']; ?></td>
+                            <td><?php echo $activity['tipe_form']; ?></td>
+                            <td><?php echo $activity['tanggal']; ?></td>
+                            <td><?php echo $activity['jam_keluar']; ?></td>
+                            <td><?php echo $activity['jam_pelaksanaan']; ?></td>
+                            <td><?php echo $activity['jam_kembali']; ?></td>
+                            <td><?php echo $activity['latlong']; ?></td>
+                            <td>
+                                <?php if ($activity['foto']) : ?>
+                                    <img src="<?php echo base_url('uploads/' . $activity['foto']); ?>" alt="Activity Photo" style="width:100px;height:auto;">
+                                <?php endif; ?>
+                            </td>
 
-                                <td><?php echo date('H:i', strtotime($activity['jam'])); ?></td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
-                            <?php
-
-
-                            } else if ($activity['tipe_form'] == 'pelaksanaan') {
-                            ?>
-                                <td>-</td>
-                                <td><?php echo date('H:i', strtotime($activity['jam'])); ?></td>
-                                <td>-</td>
-                                <td class="text-center">
-                                    <button class="btn btn-info" data-toggle="modal" data-target="#modal-latlong">Lokasi</button>
-                                    <!-- <?php echo $activity['latlong'] ?> -->
-                                </td>
-                                <td>
-                                    <img src="<?= base_url('/uploads/' . $activity['foto']) ?>" alt="" width="150" height="150">
-
-                                </td>
-                            <?php
-
-                            } else if ($activity['tipe_form'] == 'kembali') {
-
-                            ?>
-                                <td>-</td>
-                                <td>-</td>
-                                <td><?php echo date('H:i', strtotime($activity['jam'])); ?></td>
-                                <td>-</td>
-                                <td>-</td>
-                            <?php
-                            }
-
-                            ?>
 
                             <td class="text-center">
-                                <button class="btn btn-warning px-4" data-toggle="modal" data-target="#modal-edit" onclick="populateEditModal('<?php echo $activity['id'] ?>','<?php echo $activity['id_kegiatan'] ?>', '<?php echo $activity['nama_kegiatan'] ?>', '<?php echo $activity['jam'] ?>', '<?php echo $activity['latlong'] ?>', '<?php echo $activity['foto'] ?>')">Edit</button>
-                                <a href="<?php echo site_url('activity/deleteActivity/' . $activity['id']); ?>" class="btn btn-danger px-3 mt-2" onclick="return confirm('Are you sure you want to delete this activity?');">Delete</a>
+                                <button class="btn btn-warning px-4" data-toggle="modal" data-target="#modal-edit<?= $activity['id_kegiatan']; ?>">Edit</button>
+                                <a href="<?php echo site_url('activity/deleteActivity/' . $activity['id_kegiatan'] .'/' . $activity['id_keluar'] . '/' . $activity['id_pelaksanaan'] . '/' . $activity['id_kembali']); ?>" class="btn btn-danger px-3 mt-2" onclick="return confirm('Are you sure you want to delete this activity?');">Delete</a>
                             </td>
-                        </tr>
-                        <div class="modal fade" id="modal-latlong" tabindex="-1" role="dialog" aria-labelledby="modal-latlong" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="editDataModalLabel">Lokasi Pelaksanaan</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <!-- <table> -->
+
+                            <div class="modal fade" id="modal-latlong" tabindex="-1" role="dialog" aria-labelledby="modal-latlong" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editDataModalLabel">Lokasi Pelaksanaan</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- <table> -->
 
 
-                                        <p><strong>Lokasi:<iframe scrolling="no" style="width: 100%; height: 100%;" src="https://www.google.com/maps?q=<?php echo $activity["latlong"]; ?>&hl=es;z=14&output=embed"></iframe></p>
+                                            <p><strong>Lokasi:<iframe scrolling="no" style="width: 100%; height: 100%;" src="https://www.google.com/maps?q=<?php echo $activity["latlong"]; ?>&hl=es;z=14&output=embed"></iframe></p>
 
-                                        <!-- </table> -->
-                                        <!-- <iframe scrolling="no" style="width: 100%; height: 100%;" src="https://www.google.com/maps?q=<?php echo $activity["latlong"]; ?>&hl=es;z=14&output=embed"></iframe> -->
+                                            <!-- </table> -->
+                                            <!-- <iframe scrolling="no" style="width: 100%; height: 100%;" src="https://www.google.com/maps?q=<?php echo $activity["latlong"]; ?>&hl=es;z=14&output=embed"></iframe> -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="modal fade" id="modal-edit" tabindex="-1" role="dialog" aria-labelledby="modal-edit" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="editDataModalLabel">Edit Aktivitas</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form id="editDataForm" method="post" action="<?php echo site_url('/activity/editActivity/'); ?>" enctype="multipart/form-data">
-                                            <input type="hidden" id="edit_id" name="id">
-                                            <input type="hidden" id="edit_id_kegiatan" name="id_kegiatan">
-                                            <div class="form-group">
-                                                <label for="edit_nama_kegiatan">Nama Kegiatan</label>
-                                                <input type="text" class="form-control" id="edit_nama_kegiatan" name="nama_kegiatan" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="edit_jam_kembali">Jam</label>
-                                                <input type="time" class="form-control" id="edit_jam" name="jam" required>
-                                            </div>
-                                            <!-- <div class="form-group" id="latlong_group">
+                            <div class="modal fade" id="modal-edit<?= $activity['id_kegiatan']; ?>" tabindex="-1" role="dialog" aria-labelledby="modal-edit" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editDataModalLabel">Edit Aktivitas</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="editDataForm" method="post" action="<?php echo site_url('activity/editActivity/' . $activity['id_keluar'] . '/' . $activity['id_pelaksanaan'] . '/' . $activity['id_kembali']); ?>" enctype="multipart/form-data">
+
+                                                <input type="hidden" id="edit_id" name="id">
+                                                <input type="hidden" id="edit_id_kegiatan" name="id_kegiatan">
+                                                <div class="form-group">
+                                                    <label for="edit_nama_kegiatan">Nama Kegiatan</label>
+                                                    <input type="text" class="form-control" id="edit_nama_kegiatan" value="<?= $activity['nama_kegiatan']['nama_kegiatan']; ?>" name="nama_kegiatan" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="edit_jam_kembali">Jam</label>
+                                                    <input type="time" class="form-control" id="edit_jam_keluar" name="jam_keluar" value="<?= $activity['jam_keluar']; ?>">
+                                                    <input type="time" class="form-control" id="id_keluar" hidden name="id_keluar" value="<?= $activity['id_keluar']; ?>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="edit_jam_kembali">Jam</label>
+                                                    <input type="time" class="form-control" id="edit_jam_pelaksanaan" name="jam_pelaksanaan" value="<?= $activity['jam_pelaksanaan']; ?>">
+                                                    <input type="time" class="form-control" id="id_pelaksanaan" hidden name="id_pelaksanaan" value="<?= $activity['id_pelaksanaan']; ?>">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="edit_jam_kembali">Jam Kembali</label>
+                                                    <input type="time" class="form-control" id="edit_jam_kembali" name="jam_kembali" value="<?= $activity['jam_kembali']; ?>">
+                                                    <input type="time" class="form-control" id="id_kembali" hidden name="id_kembali" value="<?= $activity['id_kembali']; ?>">
+                                                </div>
+                                                <!-- <div class="form-group" id="latlong_group">
                                                 <label for="edit_lokasi">Lokasi</label>
                                                 <input type="text" class="form-control" id="edit_lokasi" name="latlong" required>
                                             </div> -->
-                                            <!-- <div class="form-group" id="foto_group">
+                                                <!-- <div class="form-group" id="foto_group">
                                                 <label for="edit_file">File</label>
                                                 <input type="file" class="form-control" id="edit_file" name="file">
                                             </div> -->
-                                            <button type="submit" class="btn btn-primary">Update</button>
-                                        </form>
+                                                <button type="submit" class="btn btn-primary">Update</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -226,14 +212,8 @@
 
 
 <script>
-    function populateEditModal(id,id_kegiatan, nama_kegiatan, jam, lokasi, foto) {
-        document.querySelector('#editDataForm').action = "<?php echo site_url('activity/editActivity/'); ?>" + id;
-        document.querySelector('#edit_id').value = id;
-        document.querySelector('#edit_id_kegiatan').value = id_kegiatan;
-        document.querySelector('#edit_nama_kegiatan').value = nama_kegiatan;
-        document.querySelector('#edit_jam').value = jam;
-        document.querySelector('#edit_lokasi').value = lokasi; // Ensure the field ID matches
-        // handle file input if needed
+    function populateEditModal(id_keluar, id_pelaksanaan, id_kembali) {
+        document.querySelector('#editDataForm').action = "<?php echo site_url('activity/editActivity/'); ?>" + id_keluar + "/" + id_pelaksanaan + "/" + id_kembali;
     }
 
     function getLocation() {
