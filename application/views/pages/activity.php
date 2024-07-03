@@ -53,7 +53,10 @@
                             <td><?php echo $activity['jam_keluar']; ?></td>
                             <td><?php echo $activity['jam_pelaksanaan']; ?></td>
                             <td><?php echo $activity['jam_kembali']; ?></td>
-                            <td><?php echo $activity['latlong']; ?></td>
+                            <td>
+                                <!-- <iframe style="width: 100%; height: 100%;" src="https://www.google.com/maps?q=<?php echo $activity['latlong']; ?>&hl=es;z=14&output=embed"></iframe> -->
+                                <button class="btn btn-info" data-toggle="modal" data-target="#modal-latlong">Lokasi</button>
+                            </td>
                             <td>
                                 <?php if ($activity['foto']) : ?>
                                     <img src="<?php echo base_url('uploads/' . $activity['foto']); ?>" alt="Activity Photo" style="width:100px;height:auto;">
@@ -63,7 +66,7 @@
 
                             <td class="text-center">
                                 <button class="btn btn-warning px-4" data-toggle="modal" data-target="#modal-edit<?= $activity['id_kegiatan']; ?>">Edit</button>
-                                <a href="<?php echo site_url('activity/deleteActivity/' . $activity['id_kegiatan'] .'/' . $activity['id_keluar'] . '/' . $activity['id_pelaksanaan'] . '/' . $activity['id_kembali']); ?>" class="btn btn-danger px-3 mt-2" onclick="return confirm('Are you sure you want to delete this activity?');">Delete</a>
+                                <a href="<?php echo site_url('activity/deleteActivity/' . $activity['id_kegiatan'] . '/' . $activity['id_keluar'] . '/' . $activity['id_pelaksanaan'] . '/' . $activity['id_kembali']); ?>" class="btn btn-danger px-3 " onclick="return confirm('Are you sure you want to delete this activity?');">Delete</a>
                             </td>
 
                             <div class="modal fade" id="modal-latlong" tabindex="-1" role="dialog" aria-labelledby="modal-latlong" aria-hidden="true">
@@ -79,7 +82,7 @@
                                             <!-- <table> -->
 
 
-                                            <p><strong>Lokasi:<iframe scrolling="no" style="width: 100%; height: 100%;" src="https://www.google.com/maps?q=<?php echo $activity["latlong"]; ?>&hl=es;z=14&output=embed"></iframe></p>
+                                            <p><strong>Lokasi:<iframe scrolling="no" style="width: 450px; height: 450px;" src="https://www.google.com/maps?q=<?php echo $activity["latlong"]; ?>&hl=es;z=14&output=embed"></iframe></p>
 
                                             <!-- </table> -->
                                             <!-- <iframe scrolling="no" style="width: 100%; height: 100%;" src="https://www.google.com/maps?q=<?php echo $activity["latlong"]; ?>&hl=es;z=14&output=embed"></iframe> -->
